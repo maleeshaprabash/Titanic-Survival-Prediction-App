@@ -58,19 +58,28 @@ if section == "Data Exploration":
     st.header("Data Exploration")
     st.subheader("Dataset Overview")
     if titanic is not None:
-        st.write(f"Shape: {titanic.shape}")
-        st.write("Columns:", titanic.columns.tolist())
+        df = titanic.copy()
+        # Convert all columns to Arrow-compatible types
+        for col in df.select_dtypes(include=['int64', 'Int64']).columns:
+            df[col] = df[col].astype('float')
+        for col in df.select_dtypes(include=['float64', 'Float64']).columns:
+            df[col] = df[col].astype('float')
+        for col in df.select_dtypes(include='object').columns:
+            df[col] = df[col].astype(str)
+
+        st.write(f"Shape: {df.shape}")
+        st.write("Columns:", df.columns.tolist())
         st.write("Data Types:")
-        st.write(titanic.dtypes)
+        st.write(df.dtypes)
         st.markdown("**Note**: Use the filter below to explore specific columns.")
-        
+
         st.subheader("Sample Data")
-        st.dataframe(titanic.head())
-        
+        st.dataframe(df.head())
+
         st.subheader("Interactive Data Filtering")
-        columns = st.multiselect("Select columns to display", titanic.columns, default=['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age'])
+        columns = st.multiselect("Select columns to display", df.columns, default=['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age'])
         if columns:
-            st.dataframe(titanic[columns])
+            st.dataframe(df[columns])
 
 # Visualizations Section
 elif section == "Visualizations":
@@ -151,7 +160,14 @@ elif section == "Model Performance":
             'F1 Score': f1_score(y_test, y_pred)
         }
         st.subheader("Model Metrics (Random Forest)")
-        st.write(pd.DataFrame([metrics]))
+        metrics_df = pd.DataFrame([metrics])
+        for col in metrics_df.select_dtypes(include=['int64', 'Int64']).columns:
+            metrics_df[col] = metrics_df[col].astype('float')
+        for col in metrics_df.select_dtypes(include=['float64', 'Float64']).columns:
+            metrics_df[col] = metrics_df[col].astype('float')
+        for col in metrics_df.select_dtypes(include='object').columns:
+            metrics_df[col] = metrics_df[col].astype(str)
+        st.write(metrics_df)
         st.markdown("**Note**: Metrics are based on a 20% test set split.")
         
         # Confusion Matrix
