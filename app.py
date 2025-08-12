@@ -26,7 +26,7 @@ section = st.sidebar.radio("Go to", ["Data Exploration", "Visualizations", "Mode
 @st.cache_data
 def load_data():
     try:
-        titanic = pd.read_csv('C:\\Users\\ASUS\\Desktop\\New Project\\data\\Titanic-Dataset.csv')
+        titanic = pd.read_csv("data/Titanic-Dataset.csv")
         return titanic
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
@@ -57,45 +57,19 @@ if section == "Data Exploration":
     st.header("Data Exploration")
     st.subheader("Dataset Overview")
     if titanic is not None:
-        df = titanic.copy()
-        # Convert dtypes for consistent display
-        df = df.convert_dtypes()
-        for col in df.select_dtypes(include='object').columns:
-            df[col] = df[col].astype(str)
-        for col in df.select_dtypes(include='Int64').columns:
-            df[col] = df[col].astype('float')  # or .astype('int').fillna(0)
-        for col in df.select_dtypes(include='Float64').columns:
-            df[col] = df[col].astype('float')
-        
-        st.write(f"Shape: {df.shape}")
-        st.write("Columns:", df.columns.tolist())
+        st.write(f"Shape: {titanic.shape}")
+        st.write("Columns:", titanic.columns.tolist())
         st.write("Data Types:")
-        st.write(df.dtypes)
+        st.write(titanic.dtypes)
         st.markdown("**Note**: Use the filter below to explore specific columns.")
         
         st.subheader("Sample Data")
-        df_head = df.head().copy()
-        df_head = df_head.convert_dtypes()
-        for col in df_head.select_dtypes(include='object').columns:
-            df_head[col] = df_head[col].astype(str)
-        for col in df_head.select_dtypes(include='Int64').columns:
-            df_head[col] = df_head[col].astype('float')
-        for col in df_head.select_dtypes(include='Float64').columns:
-            df_head[col] = df_head[col].astype('float')
-        st.dataframe(df_head)
+        st.dataframe(titanic.head())
         
         st.subheader("Interactive Data Filtering")
-        columns = st.multiselect("Select columns to display", df.columns, default=['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age'])
+        columns = st.multiselect("Select columns to display", titanic.columns, default=['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age'])
         if columns:
-            df_filtered = df[columns].copy()
-            df_filtered = df_filtered.convert_dtypes()
-            for col in df_filtered.select_dtypes(include='object').columns:
-                df_filtered[col] = df_filtered[col].astype(str)
-            for col in df_filtered.select_dtypes(include='Int64').columns:
-                df_filtered[col] = df_filtered[col].astype('float')
-            for col in df_filtered.select_dtypes(include='Float64').columns:
-                df_filtered[col] = df_filtered[col].astype('float')
-            st.dataframe(df_filtered)
+            st.dataframe(titanic[columns])
 
 # Visualizations Section
 elif section == "Visualizations":
@@ -176,12 +150,7 @@ elif section == "Model Performance":
             'F1 Score': f1_score(y_test, y_pred)
         }
         st.subheader("Model Metrics (Random Forest)")
-        metrics_df = pd.DataFrame([metrics]).convert_dtypes()
-        for col in metrics_df.select_dtypes(include='object64').columns:
-            metrics_df[col] = metrics_df[col].astype(str)
-        for col in metrics_df.select_dtypes(include='Int64').columns:
-            metrics_df[col] = metrics_df[col].astype('float64')
-        st.write(metrics_df)
+        st.write(pd.DataFrame([metrics]))
         st.markdown("**Note**: Metrics are based on a 20% test set split.")
         
         # Confusion Matrix
