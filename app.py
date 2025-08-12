@@ -177,10 +177,10 @@ elif section == "Model Performance":
         }
         st.subheader("Model Metrics (Random Forest)")
         metrics_df = pd.DataFrame([metrics]).convert_dtypes()
-        for col in metrics_df.select_dtypes(include='object').columns:
+        for col in metrics_df.select_dtypes(include='object64').columns:
             metrics_df[col] = metrics_df[col].astype(str)
         for col in metrics_df.select_dtypes(include='Int64').columns:
-            metrics_df[col] = metrics_df[col].astype('float')
+            metrics_df[col] = metrics_df[col].astype('float64')
         st.write(metrics_df)
         st.markdown("**Note**: Metrics are based on a 20% test set split.")
         
