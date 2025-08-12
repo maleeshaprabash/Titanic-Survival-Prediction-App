@@ -72,12 +72,28 @@ if section == "Data Exploration":
         st.markdown("**Note**: Use the filter below to explore specific columns.")
         
         st.subheader("Sample Data")
-        st.dataframe(df.head())
+        df_head = df.head().copy()
+        df_head = df_head.convert_dtypes()
+        for col in df_head.select_dtypes(include='object').columns:
+            df_head[col] = df_head[col].astype(str)
+        for col in df_head.select_dtypes(include='Int64').columns:
+            df_head[col] = df_head[col].astype('float')
+        for col in df_head.select_dtypes(include='Float64').columns:
+            df_head[col] = df_head[col].astype('float')
+        st.dataframe(df_head)
         
         st.subheader("Interactive Data Filtering")
         columns = st.multiselect("Select columns to display", df.columns, default=['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age'])
         if columns:
-            st.dataframe(df[columns])
+            df_filtered = df[columns].copy()
+            df_filtered = df_filtered.convert_dtypes()
+            for col in df_filtered.select_dtypes(include='object').columns:
+                df_filtered[col] = df_filtered[col].astype(str)
+            for col in df_filtered.select_dtypes(include='Int64').columns:
+                df_filtered[col] = df_filtered[col].astype('float')
+            for col in df_filtered.select_dtypes(include='Float64').columns:
+                df_filtered[col] = df_filtered[col].astype('float')
+            st.dataframe(df_filtered)
 
 # Visualizations Section
 elif section == "Visualizations":
