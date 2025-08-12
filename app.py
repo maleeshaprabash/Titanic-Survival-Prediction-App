@@ -64,6 +64,8 @@ if section == "Data Exploration":
             df[col] = df[col].astype(str)
         for col in df.select_dtypes(include='Int64').columns:
             df[col] = df[col].astype('float')  # or .astype('int').fillna(0)
+        for col in df.select_dtypes(include='Float64').columns:
+            df[col] = df[col].astype('float')
         
         st.write(f"Shape: {df.shape}")
         st.write("Columns:", df.columns.tolist())
