@@ -27,6 +27,7 @@ section = st.sidebar.radio("Go to", ["Data Exploration", "Visualizations", "Mode
 def load_data():
     try:
         titanic = pd.read_csv("data/Titanic-Dataset.csv")
+        titanic = titanic.astype({col: 'int64' for col in titanic.select_dtypes(include=['int64']).columns})
         return titanic
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
